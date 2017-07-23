@@ -13,9 +13,10 @@ shutdown = False
 app = QtGui.QApplication([''])
 plot = None
 lidar = None
+w = None
 
 def main():
-	global plot
+	global plot, w
 	w = QtGui.QWidget()
 	plot = pg.PlotWidget()
 	layout = QtGui.QGridLayout()
@@ -23,17 +24,19 @@ def main():
 	layout.addWidget(plot, 0, 0)
 	w.show()
 
-	#t = threading.Thread(target=threadSerial, args=())
-	#t.start()
-
-	global XV11
+	global lidar
 	lidar = XV11()
 	lidar.Connect()
 
-	x = np.arange(1000)
-	y = np.random.normal(size=(3, 1000))
-	for i in range(3):
-		plot.plot(x, y[i], pen=(i,3))  ## setting pen=(i,3) automaticaly creates three different-colored pens
+	#x = np.arange(1000)
+	#y = np.random.normal(size=(3, 1000))
+	#for i in range(3):
+	#	plot.plot(x, y[i], pen=(i,3))  ## setting pen=(i,3) automaticaly creates three different-colored pens
+	plot.setYRange(-6000, 6000)
+	plot.setXRange(-6000, 6000)
+
+	t = threading.Thread(target=plotLidar, args=())
+	t.start()
 
 	#waitForExit()
 	app.exec_()
@@ -42,6 +45,13 @@ def main():
 	lidar.Disconnect()
 
 	sys.exit(0)
+
+def plotLidar():
+	while shutdown == False:
+		time.sleep(0.3)
+		plot.clear()
+		plot.plot(lidar.x, lidar.y, title="Three plot curves", symbol='o', symbolSize=8)
+		w.setWindowTitle(str(lidar.speed))
 
 if __name__ == '__main__':
 	main()

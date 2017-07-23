@@ -19,6 +19,8 @@ class XV11:
 	speed = 0
 	index = 0
 	angles = [[] for i in range(360)]
+	x = [[] for i in range(360)]
+	y = [[] for i in range(360)]
 	init_level = 0
 	nb_errors = 0
 	def __init__(self, **kwargs):
@@ -146,4 +148,6 @@ def process_data(self, angle, data):
 
 	#print(angle)
 	self.angles[angle] = AngleData(angle, dist_mm, quality, dist_x, dist_y)
+	self.x[angle] = dist_x
+	self.y[angle] = dist_y
 
