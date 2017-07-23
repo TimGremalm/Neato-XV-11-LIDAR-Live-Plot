@@ -33,9 +33,6 @@ def main():
 	lidar = XV11()
 	lidar.Connect()
 
-	#x = np.arange(1000)
-	#y = np.random.normal(size=(3, 1000))
-
 	t = threading.Thread(target=plotLidar, args=())
 	t.start()
 
