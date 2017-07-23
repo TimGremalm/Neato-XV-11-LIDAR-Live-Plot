@@ -18,7 +18,7 @@ class AngleData:
 class XV11:
 	speed = 0
 	index = 0
-	angles = [[] for i in range(360)]
+	angles = [AngleData(0, 0, 0, 0, 0) for i in range(360)]
 	x = [[] for i in range(360)]
 	y = [[] for i in range(360)]
 	init_level = 0

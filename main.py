@@ -3,7 +3,12 @@
 
 import sys
 import threading
-from PyQt4 import QtGui  # (the example applies equally well to PySide)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from PyQt4 import QtGui
+from PyQt4.QtOpenGL import *
+import math
+
 import pyqtgraph as pg
 import numpy as np
 from NeatoXV11 import *
@@ -18,7 +23,7 @@ w = None
 def main():
 	global plot, w
 	w = QtGui.QWidget()
-	plot = pg.PlotWidget()
+	plot = OpenGLPlotWidget(plot)
 	layout = QtGui.QGridLayout()
 	w.setLayout(layout)
 	layout.addWidget(plot, 0, 0)
@@ -30,10 +35,6 @@ def main():
 
 	#x = np.arange(1000)
 	#y = np.random.normal(size=(3, 1000))
-	#for i in range(3):
-	#	plot.plot(x, y[i], pen=(i,3))  ## setting pen=(i,3) automaticaly creates three different-colored pens
-	plot.setYRange(-6000, 6000)
-	plot.setXRange(-6000, 6000)
 
 	t = threading.Thread(target=plotLidar, args=())
 	t.start()
@@ -48,10 +49,41 @@ def main():
 
 def plotLidar():
 	while shutdown == False:
-		time.sleep(0.3)
-		plot.clear()
-		plot.plot(lidar.x, lidar.y, title="Three plot curves", symbol='o', symbolSize=8)
+		time.sleep(1)
 		w.setWindowTitle(str(lidar.speed))
+
+class OpenGLPlotWidget(QGLWidget):
+	def __init__(self, parent):
+		QGLWidget.__init__(self, parent)
+		self.setMinimumSize(500, 500)
+
+	def paintGL(self):
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+		glLoadIdentity()
+
+		# Draw in 'immediate mode'
+		glColor(0.0, 1.0, 0.0)
+		glBegin(GL_LINE_STRIP)
+		for deg in lidar.angles:
+			glVertex(deg.x, deg.y, 0.0)
+		glEnd()
+
+		glFlush()
+
+	def resizeGL(self, w, h):
+		glViewport(0, 0, w, h)
+		glMatrixMode(GL_PROJECTION)
+		glLoadIdentity()
+		gluPerspective(40.0, 1.0, 1.0, 30.0)
+
+	def initializeGL(self):
+		# set viewing projection
+		glClearColor(0.0, 0.0, 0.0, 1.0)
+		glClearDepth(1.0)
+
+		glMatrixMode(GL_PROJECTION)
+		glLoadIdentity()
+		gluPerspective(40.0, 1.0, 1.0, 30.0)
 
 if __name__ == '__main__':
 	main()
