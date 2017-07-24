@@ -46,7 +46,8 @@ def main():
 
 def plotLidar():
 	while shutdown == False:
-		time.sleep(1)
+		time.sleep(1.5)
+		plot.repaint()
 		w.setWindowTitle(str(lidar.speed))
 
 class OpenGLPlotWidget(QGLWidget):
@@ -61,8 +62,9 @@ class OpenGLPlotWidget(QGLWidget):
 		# Draw in 'immediate mode'
 		glColor(0.0, 1.0, 0.0)
 		glBegin(GL_LINE_STRIP)
+		scaleConst = 3000
 		for deg in lidar.angles:
-			glVertex(deg.x, deg.y, 0.0)
+			glVertex(deg.x/scaleConst, deg.y/scaleConst, 0.0)
 		glEnd()
 
 		glFlush()

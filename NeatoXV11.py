@@ -13,7 +13,7 @@ class AngleData:
 		self.x = x
 		self.y = y
 	def __repr__(self):
-		return str(self.distance)
+		return 'r: %d x: %d y: %d q: %d' % (self.distance, self.x, self.y, self.quality)
 
 class XV11:
 	speed = 0
