@@ -137,7 +137,7 @@ def process_data(self, angle, data):
 	x2= data[2]
 	x3= data[3]
 
-	angle_rad = angle * math.pi / 180.0
+	angle_rad = (360 - angle) * math.pi / 180.0
 	c = math.cos(angle_rad)
 	s = -math.sin(angle_rad)
 
